@@ -90,7 +90,8 @@ Example input:
   "TotalCharges": 957.2
 }
 
-
+# Scheduled Execution
+A GitHub Actions workflow is included to support scheduled data ingestion and simulate automated pipeline updates.
 
 # Notes
 - The system simulates live data by adding new data batches  
