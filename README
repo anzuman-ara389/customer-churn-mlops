@@ -5,14 +5,11 @@ Student ID: 20241266
 # Customer Churn MLOps Pipeline
 
 # Project Overview
-
-This project implements an end-to-end MLOps pipeline for customer churn prediction. The main goal is not to achieve the highest model accuracy, but to design a system that can handle data ingestion, preprocessing, model training, deployment, and monitoring in a structured and reproducible way.
-
-The system predicts whether a customer is likely to churn based on input features.
+This project implements an end-to-end MLOps pipeline for customer churn prediction. The main goal is to design a system that can handle data ingestion, preprocessing, model training, deployment, and monitoring in a structured and reproducible way.
+The system predicts whether a customer is likely to churn based on input features.A lightweight Streamlit frontend is also included to allow interactive user predictions.
 
 
 # Pipeline Structure
-
 The pipeline consists of the following components:
 
 1. Data Ingestion  
@@ -32,18 +29,16 @@ Prediction logs are stored to track system behavior. Data ingestion is also logg
 
 
 # Project Structure
-
-customer-churn-mlops/
-│
+customer-churn-mlops
 ├── app/            # FastAPI application
 ├── src/            # pipeline scripts (ingestion, preprocessing, training)
 ├── data/           # datasets
 ├── artifacts/      # model, logs, metrics
+├── frontend.py     # Streamlit frontend
 ├── Dockerfile      # container setup
 
 
 # How to Run (without Docker)
-
 Step 1: Install dependencies  
 pip install -r requirements.txt  
 
@@ -53,10 +48,13 @@ uvicorn app.main:app --reload
 Step 3: Open browser  
 http://127.0.0.1:8000/docs  
 
+Step 4: Run Streamlit frontend
+streamlit run frontend.py
 
+Step 5: Frontend can be accessed locally via:
+http://localhost:8501
 
 # How to Run with Docker
-
 Step 1: Build Docker image  
 docker build -t churn-app .  
 
@@ -68,11 +66,8 @@ http://localhost:8000/docs
 
 
 # API Usage
-
 Use the /predict endpoint.
-
 Example input:
-
 {
   "gender": "Female",
   "SeniorCitizen": 0,
@@ -98,7 +93,6 @@ Example input:
 
 
 # Notes
-
 - The system simulates live data by adding new data batches  
 - The focus is on pipeline design and system structure  
 - Logs and artifacts are stored for reproducibility  
