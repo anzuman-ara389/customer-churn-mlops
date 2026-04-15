@@ -1,31 +1,19 @@
 import pandas as pd
-import os
+import sqlite3
 from datetime import datetime
 
-DATA_PATH = "data/historical_data.csv"
-NEW_DATA_PATH = "data/new_data.csv"
-LOG_PATH = "artifacts/ingestion_log.txt"
+conn = sqlite3.connect("data/database.db")
 
+historical = pd.read_sql("SELECT * FROM historical_data", conn)
+new_data = pd.read_sql("SELECT * FROM new_data", conn)
 
-def ingest_new_data():
-    # simulate new data (sample from historical)
-    df = pd.read_csv(DATA_PATH)
+updated = pd.concat([historical, new_data], ignore_index=True)
 
-    new_data = df.sample(10)
+updated.to_sql("historical_data", conn, if_exists="replace", index=False)
 
-    # save new data
-    new_data.to_csv(NEW_DATA_PATH, index=False)
+with open("artifacts/ingestion_log.txt", "a") as f:
+    f.write(f"Ingestion run at {datetime.now()}\n")
 
-    # append to historical
-    updated_df = pd.concat([df, new_data], ignore_index=True)
-    updated_df.to_csv(DATA_PATH, index=False)
+conn.close()
 
-    # log
-    with open(LOG_PATH, "a") as f:
-        f.write(f"{datetime.now()} - New data ingested: {len(new_data)} rows\n")
-
-    print("New data ingested successfully!")
-
-
-if __name__ == "__main__":
-    ingest_new_data()
+print("Ingestion completed.")

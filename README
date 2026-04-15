@@ -6,17 +6,17 @@ Student ID: 20241266
 
 # Project Overview
 This project implements an end-to-end MLOps pipeline for customer churn prediction. The main goal is to design a system that can handle data ingestion, preprocessing, model training, deployment, and monitoring in a structured and reproducible way.
-The system predicts whether a customer is likely to churn based on input features.A lightweight Streamlit frontend is also included to allow interactive user predictions.
 
+The system predicts whether a customer is likely to churn based on input features. A lightweight Streamlit frontend is also included to allow interactive user predictions. SQLite is used as a lightweight relational database to store historical and incoming customer data.
 
 # Pipeline Structure
 The pipeline consists of the following components:
 
 1. Data Ingestion  
-Historical data is collected from an external source and stored locally. New data is added to simulate live incoming data. Each ingestion step is logged to track updates.
+Historical customer data is first stored in a lightweight SQLite database. New incoming customer data is also stored separately to simulate live data updates. The ingestion pipeline merges new records into the historical dataset and logs each update for monitoring and reproducibility.
 
 2. Preprocessing  
-The data is cleaned by handling missing values, converting data types, and encoding categorical variables. Feature engineering is also applied where necessary.
+The pipeline reads customer data from the SQLite database, then performs preprocessing by handling missing values, converting data types, and encoding categorical variables. Feature engineering is also applied where necessary.
 
 3. Model Training  
 A machine learning model is trained using the processed dataset. The trained model is saved as an artifact for reuse.
@@ -27,31 +27,42 @@ A FastAPI application is used to serve the trained model. The API accepts input 
 5. Monitoring  
 Prediction logs are stored to track system behavior. Data ingestion is also logged to monitor data updates over time.
 
-
 # Project Structure
 customer-churn-mlops
 ├── app/            # FastAPI application
 ├── src/            # pipeline scripts (ingestion, preprocessing, training)
-├── data/           # datasets
+├── data/           # CSV files and SQLite database
+│   ├── database.db # SQLite database for customer data
 ├── artifacts/      # model, logs, metrics
 ├── frontend.py     # Streamlit frontend
 ├── Dockerfile      # container setup
-
 
 # How to Run (without Docker)
 Step 1: Install dependencies  
 pip install -r requirements.txt  
 
-Step 2: Run the API  
+Step 2: Initialize the SQLite database  
+python src/init_db.py  
+
+Step 3: Run the ingestion pipeline  
+python src/ingestion.py  
+
+Step 4: Run preprocessing  
+python src/preprocessing.py  
+
+Step 5: Train the model  
+python src/train.py  
+
+Step 6: Run the API  
 uvicorn app.main:app --reload  
 
-Step 3: Open browser  
+Step 7: Open browser  
 http://127.0.0.1:8000/docs  
 
-Step 4: Run Streamlit frontend
-streamlit run frontend.py
+Step 8: Run Streamlit frontend  
+streamlit run frontend.py  
 
-Step 5: Frontend can be accessed locally via:
+Step 9: Frontend can be accessed locally via:  
 http://localhost:8501
 
 # How to Run with Docker
@@ -64,9 +75,9 @@ docker run -p 8000:8000 churn-app
 Step 3: Open  
 http://localhost:8000/docs  
 
-
 # API Usage
 Use the /predict endpoint.
+
 Example input:
 {
   "gender": "Female",
@@ -94,6 +105,7 @@ Example input:
 A GitHub Actions workflow is included to support scheduled data ingestion and simulate automated pipeline updates.
 
 # Notes
-- The system simulates live data by adding new data batches  
-- The focus is on pipeline design and system structure  
-- Logs and artifacts are stored for reproducibility  
+- The system simulates live customer data by adding new data batches  
+- SQLite is used for structured storage of historical and incoming customer data  
+- The focus is on pipeline design, reproducibility, and deployment  
+- Logs and artifacts are stored for monitoring and reproducibility

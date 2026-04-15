@@ -1,4 +1,11 @@
 import pandas as pd
+import sqlite3
+
+conn = sqlite3.connect("data/database.db")
+
+df = pd.read_sql("SELECT * FROM historical_data", conn)
+
+conn.close()
 
 INPUT_PATH = "data/historical_data.csv"
 OUTPUT_PATH = "data/processed_data.csv"
