@@ -38,6 +38,9 @@ jobs:
       - name: Run training
         run: python src/train.py
 
+         - name: Run drift check
+  run: python src/drift_check.py
+
       - name: Commit updated files
         run: |
           git config --global user.name "github-actions"
