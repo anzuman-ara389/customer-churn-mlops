@@ -1,23 +1,20 @@
 import pandas as pd
 import sqlite3
 
-conn = sqlite3.connect("data/database.db")
-
-df = pd.read_sql("SELECT * FROM historical_data", conn)
-
-conn.close()
-
-INPUT_PATH = "data/historical_data.csv"
 OUTPUT_PATH = "data/processed_data.csv"
 
-
 def preprocess():
-    df = pd.read_csv(INPUT_PATH)
+    conn = sqlite3.connect("data/database.db")
+
+    df = pd.read_sql("SELECT * FROM historical_data", conn)
+
+    conn.close()
 
     if "customerID" in df.columns:
         df = df.drop("customerID", axis=1)
 
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
+
     df = df.fillna(0)
 
     if "Churn" in df.columns:
@@ -29,8 +26,8 @@ def preprocess():
     df = pd.get_dummies(df, drop_first=True)
 
     df.to_csv(OUTPUT_PATH, index=False)
-    print("Preprocessing done.")
 
+    print("Preprocessing done.")
 
 if __name__ == "__main__":
     preprocess()

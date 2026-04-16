@@ -5,6 +5,9 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   run-ingestion:
     runs-on: ubuntu-latest
@@ -12,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -19,7 +24,24 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pandas
+        run: pip install -r requirements.txt
 
-      - name: Run ingestion script
+      - name: Initialize SQLite database
+        run: python src/init_db.py
+
+      - name: Run ingestion
         run: python src/ingestion.py
+
+      - name: Run preprocessing
+        run: python src/preprocessing.py
+
+      - name: Run training
+        run: python src/train.py
+
+      - name: Commit updated files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add data/processed_data.csv artifacts/ingestion_log.txt artifacts/metrics.txt artifacts/model.pkl artifacts/columns.pkl
+          git diff --cached --quiet || git commit -m "Automated pipeline update"
+          git push
