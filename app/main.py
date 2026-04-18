@@ -5,9 +5,9 @@ import logging
 
 app = FastAPI()
 
-# 🔴 Logging fix (important)
+# Logging fix
 logging.basicConfig(
-    filename="predictions.log",   # root এ save হবে
+    filename="predictions.log",
     level=logging.INFO,
     format="%(asctime)s - %(message)s",
     force=True
