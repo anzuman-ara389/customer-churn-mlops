@@ -1,11 +1,32 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 import joblib
 import pandas as pd
 import logging
 
 app = FastAPI()
 
-# Logging fix
+class CustomerInput(BaseModel):
+    gender: str
+    SeniorCitizen: int
+    Partner: str
+    Dependents: str
+    tenure: int
+    PhoneService: str
+    MultipleLines: str
+    InternetService: str
+    OnlineSecurity: str
+    OnlineBackup: str
+    DeviceProtection: str
+    TechSupport: str
+    StreamingTV: str
+    StreamingMovies: str
+    Contract: str
+    PaperlessBilling: str
+    PaymentMethod: str
+    MonthlyCharges: float
+    TotalCharges: float
+
 logging.basicConfig(
     filename="predictions.log",
     level=logging.INFO,
@@ -13,7 +34,6 @@ logging.basicConfig(
     force=True
 )
 
-# Load artifacts
 model = joblib.load("artifacts/model.pkl")
 columns = joblib.load("artifacts/columns.pkl")
 
@@ -22,33 +42,23 @@ def home():
     return {"message": "API running"}
 
 @app.post("/predict")
-def predict(data: dict):
-    
-    # Convert input to dataframe
-    df = pd.DataFrame([data])
+def predict(data: CustomerInput):
+    df = pd.DataFrame([data.model_dump()])
 
-    # Fix TotalCharges
     if "TotalCharges" in df.columns:
         df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
 
-    # Fill missing values
     df = df.fillna(0)
 
-    # Feature engineering
     if "tenure" in df.columns and "MonthlyCharges" in df.columns:
         df["avg_monthly_value"] = df["MonthlyCharges"] / (df["tenure"] + 1)
 
-    # Encoding
     df = pd.get_dummies(df, drop_first=True)
-
-    # Align columns
     df = df.reindex(columns=columns, fill_value=0)
 
-    # Prediction
     pred = int(model.predict(df)[0])
     result = "Churn" if pred == 1 else "No Churn"
 
-    # ✅ Logging
-    logging.info(f"Input: {data} | Prediction: {result}")
+    logging.info(f"Input: {data.model_dump()} | Prediction: {result}")
 
     return {"prediction": result}
