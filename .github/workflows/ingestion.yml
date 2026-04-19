@@ -11,6 +11,7 @@ permissions:
 jobs:
   run-ingestion:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,6 +45,9 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/processed_data.csv artifacts/ingestion_log.txt artifacts/metrics.txt artifacts/model.pkl artifacts/columns.pkl
+          git add data/processed_data.csv artifacts/
           git diff --cached --quiet || git commit -m "Automated pipeline update"
           git push
+
+      - name: Build Docker image
+        run: docker build -t churn-app .
