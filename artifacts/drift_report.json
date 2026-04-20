@@ -1,21 +1,21 @@
 {
-  "timestamp": "2026-04-19T11:45:56.392659",
+  "timestamp": "2026-04-20T01:28:18.400640",
   "drift_detected": true,
   "checks": {
     "tenure": {
-      "historical_mean": 32.35119807174252,
+      "historical_mean": 32.3313039784794,
       "new_data_mean": 18.3,
-      "relative_difference": 0.43433314606306767
+      "relative_difference": 0.4339850800275157
     },
     "MonthlyCharges": {
-      "historical_mean": 64.75457252233092,
+      "historical_mean": 64.74747274529237,
       "new_data_mean": 59.739999999999995,
-      "relative_difference": 0.07743966564155695
+      "relative_difference": 0.07733850381547058
     },
     "TotalCharges": {
-      "historical_mean": 2282.0840599261574,
+      "historical_mean": 2280.871128757799,
       "new_data_mean": 1426.7250000000001,
-      "relative_difference": 0.3748148784576409
+      "relative_difference": 0.37448241490456274
     }
   }
 }
